@@ -1,0 +1,52 @@
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4">{{ 'ECommerce::Dashboard' | abpLocalization }}</h1>
+  </div>
+</div>
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title text-muted small text-uppercase">{{ 'ECommerce::DashboardOverview' | abpLocalization }}</h5>
+        <p class="card-text text-muted mb-0">
+          {{ 'ECommerce::DashboardOverviewDescription' | abpLocalization }}
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title text-muted small text-uppercase">{{ 'ECommerce::Orders' | abpLocalization }}</h5>
+        <p class="card-text text-muted mb-0">
+          {{ 'ECommerce::DashboardOrdersDescription' | abpLocalization }}
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title text-muted small text-uppercase">{{ 'ECommerce::Catalog' | abpLocalization }}</h5>
+        <p class="card-text text-muted mb-0">
+          {{ 'ECommerce::DashboardCatalogDescription' | abpLocalization }}
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4" *abpPermission="tenantSignupManagePolicy">
+    <div class="card h-100 border-primary border-opacity-25">
+      <div class="card-body">
+        <h5 class="card-title text-muted small text-uppercase">
+          {{ 'ECommerce::OrganizationSignupAdminQueueTitle' | abpLocalization }}
+        </h5>
+        <p class="card-text text-muted mb-3">
+          {{ 'ECommerce::OrganizationSignupAdminQueueIntro' | abpLocalization }}
+        </p>
+        <a routerLink="/admin/organization-signups" class="btn btn-primary btn-sm">
+          {{ 'ECommerce::OrganizationSignupQueueOpen' | abpLocalization }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

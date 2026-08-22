@@ -1,0 +1,92 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/catalog">{{ 'ECommerce::Catalog' | abpLocalization }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ 'ECommerce::ProductComparison' | abpLocalization }}</li>
+  </ol>
+</nav>
+
+<h1 class="mb-4">{{ 'ECommerce::ProductComparison' | abpLocalization }}</h1>
+
+@if (loading()) {
+  <p class="text-muted">{{ 'ECommerce::Loading' | abpLocalization }}</p>
+} @else if (products().length === 0) {
+  <p class="text-muted">{{ 'ECommerce::NoProducts' | abpLocalization }}</p>
+  <a routerLink="/catalog" class="btn btn-primary">{{ 'ECommerce::Catalog' | abpLocalization }}</a>
+} @else {
+  <div class="storefront-compare-table-responsive">
+    <table class="table table-bordered storefront-compare-table">
+      <thead>
+        <tr>
+          <th class="storefront-compare-label-col">{{ 'ECommerce::Product' | abpLocalization }}</th>
+          @for (p of products(); track p.id) {
+            <th class="storefront-compare-product-col">
+              <div class="storefront-compare-product-header">
+                @if (getPrimaryImageUrl(p); as imgUrl) {
+                  <a [routerLink]="['/catalog/product', p.id]" class="storefront-compare-img-link">
+                    <img [src]="imgUrl" [alt]="p.name" class="storefront-compare-img" />
+                  </a>
+                }
+                <a [routerLink]="['/catalog/product', p.id]" class="storefront-compare-name">{{ p.name }}</a>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary mt-1"
+                  (click)="removeFromCompare(p.id)"
+                >
+                  {{ 'ECommerce::Delete' | abpLocalization }}
+                </button>
+              </div>
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="storefront-compare-label-col">{{ 'ECommerce::ProductNumber' | abpLocalization }}</td>
+          @for (p of products(); track p.id) {
+            <td>{{ p.productNumber }}</td>
+          }
+        </tr>
+        <tr>
+          <td class="storefront-compare-label-col">{{ 'ECommerce::Category' | abpLocalization }}</td>
+          @for (p of products(); track p.id) {
+            <td>{{ p.categoryName || '—' }}</td>
+          }
+        </tr>
+        <tr>
+          <td class="storefront-compare-label-col">{{ 'ECommerce::Brand' | abpLocalization }}</td>
+          @for (p of products(); track p.id) {
+            <td>{{ p.brandName || '—' }}</td>
+          }
+        </tr>
+        <tr>
+          <td class="storefront-compare-label-col">{{ 'ECommerce::Model' | abpLocalization }}</td>
+          @for (p of products(); track p.id) {
+            <td>{{ p.modelName || '—' }}</td>
+          }
+        </tr>
+        <tr>
+          <td class="storefront-compare-label-col">{{ 'ECommerce::Price' | abpLocalization }}</td>
+          @for (pr of priceRange(); track $index) {
+            <td>
+              @if (pr !== null) {
+                {{ pr | number:'1.2-2' }}
+              } @else {
+                —
+              }
+            </td>
+          }
+        </tr>
+        @for (attrName of attributeNames(); track attrName) {
+          <tr>
+            <td class="storefront-compare-label-col">{{ attrName }}</td>
+            @for (p of products(); track p.id) {
+              <td>
+                {{ getProductAttributeValues(p, attrName).join(', ') || '—' }}
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

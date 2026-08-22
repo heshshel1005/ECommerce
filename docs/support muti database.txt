@@ -1,0 +1,1 @@
+Should all tenants share one PostgreSQL database (single connection string, rows isolated by TenantId — the usual ABP default), or do you need separate databases per tenant (extra connection strings on each tenant)?

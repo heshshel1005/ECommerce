@@ -1,0 +1,23 @@
+<Solution>
+    <Configurations>
+        <Platform Name="Any CPU" />
+    </Configurations>
+    <Folder Name="/src/">
+        <Project Path="src/ECommerce.Domain/ECommerce.Domain.csproj" />
+        <Project Path="src/ECommerce.Application/ECommerce.Application.csproj" />
+        <Project Path="src/ECommerce.EntityFrameworkCore/ECommerce.EntityFrameworkCore.csproj" />
+        <Project Path="src/ECommerce.Domain.Shared/ECommerce.Domain.Shared.csproj" />
+        <Project Path="src/ECommerce.Application.Contracts/ECommerce.Application.Contracts.csproj" />
+        <Project Path="src/ECommerce.HttpApi/ECommerce.HttpApi.csproj" />
+        <Project Path="src/ECommerce.HttpApi.Client/ECommerce.HttpApi.Client.csproj" />
+        <Project Path="src/ECommerce.DbMigrator/ECommerce.DbMigrator.csproj" />
+        <Project Path="src/ECommerce.HttpApi.Host/ECommerce.HttpApi.Host.csproj" />
+    </Folder>
+    <Folder Name="/test/">
+        <Project Path="test/ECommerce.Application.Tests/ECommerce.Application.Tests.csproj" />
+        <Project Path="test/ECommerce.EntityFrameworkCore.Tests/ECommerce.EntityFrameworkCore.Tests.csproj" />
+        <Project Path="test/ECommerce.TestBase/ECommerce.TestBase.csproj" />
+        <Project Path="test/ECommerce.Domain.Tests/ECommerce.Domain.Tests.csproj" />
+        <Project Path="test/ECommerce.HttpApi.Client.ConsoleTestApp/ECommerce.HttpApi.Client.ConsoleTestApp.csproj" />
+    </Folder>
+</Solution>

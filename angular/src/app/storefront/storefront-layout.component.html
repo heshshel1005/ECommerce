@@ -1,0 +1,100 @@
+<div class="storefront-layout">
+  <header class="storefront-header">
+    <div class="storefront-header-inner">
+      <a routerLink="/" class="storefront-logo">
+        {{ 'ECommerce::AppName' | abpLocalization }}
+      </a>
+      <button
+        type="button"
+        class="storefront-nav-toggler"
+        (click)="toggleNav()"
+        [attr.aria-expanded]="navOpen()"
+        aria-label="Toggle navigation"
+      >
+        <i class="fa" [class.fa-bars]="!navOpen()" [class.fa-times]="navOpen()" aria-hidden="true"></i>
+      </button>
+      <nav class="storefront-nav" [class.storefront-nav-open]="navOpen()">
+        <a routerLink="/catalog" routerLinkActive="active" class="storefront-nav-link" (click)="closeNav()">
+          {{ 'ECommerce::Catalog' | abpLocalization }}
+        </a>
+        <a routerLink="/cart" routerLinkActive="active" class="storefront-nav-link d-inline-flex align-items-center" (click)="closeNav()">
+          <span class="position-relative d-inline-block me-1">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+            @if (cartService.cartItemCount() > 0) {
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill storefront-cart-badge">
+                {{ cartService.cartItemCount() }}
+              </span>
+            }
+          </span>
+          {{ 'ECommerce::Cart' | abpLocalization }}
+        </a>
+        <app-language-switcher />
+        @if (authService.isAuthenticated) {
+          <div class="storefront-nav-dropdown">
+            <button
+              type="button"
+              class="storefront-nav-link storefront-nav-dropdown-toggle"
+              [attr.aria-expanded]="accountMenuOpen()"
+              aria-haspopup="true"
+              (click)="toggleAccountMenu()"
+            >
+              <i class="fa fa-user me-1"></i>
+              {{ 'ECommerce::MyAccount' | abpLocalization }}
+              <i class="fa fa-chevron-down ms-1 small" [class.fa-rotate-180]="accountMenuOpen()"></i>
+            </button>
+            @if (accountMenuOpen()) {
+              <ul class="dropdown-menu dropdown-menu-end show">
+                <li>
+                  <a routerLink="/my-account" class="dropdown-item" routerLinkActive="active" (click)="closeNav(); closeAccountMenu()">
+                    {{ 'ECommerce::CustomerDashboardOverview' | abpLocalization }}
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="/my-account/orders" class="dropdown-item" routerLinkActive="active" (click)="closeNav(); closeAccountMenu()">
+                    {{ 'ECommerce::OrderHistory' | abpLocalization }}
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="/my-account/profile" class="dropdown-item" routerLinkActive="active" (click)="closeNav(); closeAccountMenu()">
+                    {{ 'ECommerce::Profile' | abpLocalization }}
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="/my-account/wishlist" class="dropdown-item" routerLinkActive="active" (click)="closeNav(); closeAccountMenu()">
+                    {{ 'ECommerce::Wishlist' | abpLocalization }}
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <button type="button" class="dropdown-item text-danger" (click)="logout()">
+                    {{ 'AbpAccount::Logout' | abpLocalization }}
+                  </button>
+                </li>
+              </ul>
+            }
+          </div>
+        } @else {
+          <a routerLink="/organization/register" routerLinkActive="active" class="storefront-nav-link" (click)="closeNav()">
+            <i class="fa fa-building me-1"></i>
+            {{ 'ECommerce::OrganizationSignupPageTitle' | abpLocalization }}
+          </a>
+          <a (click)="authService.navigateToLogin(); closeNav()" class="storefront-nav-link" role="button">
+            <i class="fa fa-sign-in me-1"></i>
+            {{ 'AbpAccount::Login' | abpLocalization }}
+          </a>
+        }
+      </nav>
+    </div>
+  </header>
+
+  <main class="storefront-main">
+    <app-breadcrumbs />
+    <router-outlet />
+  </main>
+
+  <footer class="storefront-footer">
+    <div class="storefront-footer-inner">
+      <span>&copy; {{ currentYear }} {{ 'ECommerce::AppName' | abpLocalization }}</span>
+    </div>
+  </footer>
+</div>

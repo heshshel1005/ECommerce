@@ -1,0 +1,81 @@
+<div class="row mb-3">
+  <div class="col-12">
+    <nav class="mb-2">
+      <a routerLink="/admin/cms/blogs" class="text-muted me-2">&larr; {{ 'ECommerce::CmsBlogs' | abpLocalization }}</a>
+    </nav>
+    <h1 class="mb-1">{{ blogName() || 'Blog' }} – {{ 'ECommerce::Posts' | abpLocalization }}</h1>
+    <p class="text-muted mb-0">{{ 'ECommerce::CmsBlogsDescription' | abpLocalization }}</p>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col-12">
+    <button type="button" class="btn btn-primary" (click)="openCreate()">
+      <i class="fa fa-plus me-1"></i>
+      {{ 'ECommerce::AddBlogPost' | abpLocalization }}
+    </button>
+  </div>
+</div>
+
+<!-- Create/Edit form -->
+<div *ngIf="showForm()" class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title">{{ (editingId() ? 'ECommerce::EditBlogPost' : 'ECommerce::AddBlogPost') | abpLocalization }}</h5>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="mb-2">
+        <label class="form-label">{{ 'ECommerce::PostTitle' | abpLocalization }}</label>
+        <input type="text" class="form-control" formControlName="title" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">{{ 'ECommerce::PostSlug' | abpLocalization }}</label>
+        <input type="text" class="form-control" formControlName="slug" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label">{{ 'ECommerce::ShortDescription' | abpLocalization }}</label>
+        <input type="text" class="form-control" formControlName="shortDescription" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{{ 'ECommerce::PostContent' | abpLocalization }}</label>
+        <textarea class="form-control" formControlName="content" rows="8"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary me-2" [disabled]="submitting()">
+        {{ 'ECommerce::Save' | abpLocalization }}
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="cancelForm()">
+        {{ 'ECommerce::Cancel' | abpLocalization }}
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Post list -->
+<div class="card">
+  <div class="card-body">
+    <div *ngIf="loading()" class="text-muted">Loading...</div>
+    <div *ngIf="!loading() && posts().length === 0" class="text-muted">
+      {{ 'ECommerce::NoPostsYet' | abpLocalization }}
+    </div>
+    <div *ngIf="!loading() && posts().length > 0" class="table-responsive">
+      <table class="table table-sm align-middle mb-0">
+        <thead>
+          <tr>
+            <th>{{ 'ECommerce::PostTitle' | abpLocalization }}</th>
+            <th>{{ 'ECommerce::PostSlug' | abpLocalization }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of posts()">
+            <td>{{ p.title }}</td>
+            <td><code>{{ p.slug }}</code></td>
+            <td>
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="openEdit(p)">
+                {{ 'ECommerce::EditBlogPost' | abpLocalization }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

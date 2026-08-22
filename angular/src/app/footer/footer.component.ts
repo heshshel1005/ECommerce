@@ -1,0 +1,27 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-footer',
+  template: `
+    <div class="lpx-footbar-container end-0">
+      <div class="lpx-footbar">
+        <div class="lpx-footbar-copyright">
+          <span>{{ currentYear }}© </span>
+          <a href="https://leptontheme.com/" target="_blank">Lepton Theme</a>
+          <span> by </span>
+          <a href="https://volosoft.com/" target="_blank">Volosoft</a>
+        </div>
+        <div class="lpx-footbar-solo-links">
+          <a href="/page/about">About</a>
+          <a href="/page/privacy">Privacy</a>
+          <a href="/page/contact">Contact</a>
+          <a href="/blog">Blog</a>
+          <a href="/page/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+  `,
+})
+export class FooterComponent {
+  currentYear = new Date().getFullYear();
+}

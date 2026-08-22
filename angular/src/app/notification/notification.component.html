@@ -1,0 +1,76 @@
+<div class="notification-container">
+  <!-- Notification Bell -->
+  <div class="notification-bell" (click)="toggleDropdown()" [class.has-unread]="unreadCount > 0">
+    <i class="fas fa-bell"></i>
+    <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+  </div>
+
+  <!-- Dropdown -->
+  <div class="notification-dropdown" *ngIf="showDropdown">
+    <div class="notification-header">
+      <h5>Notifications</h5>
+      <div class="notification-actions">
+        <button class="btn btn-sm btn-link" *ngIf="unreadCount > 0" (click)="markAllAsRead()" title="Mark all as read">
+          <i class="fas fa-check-double"></i> Mark all read
+        </button>
+        <button class="btn btn-sm btn-link text-danger" *ngIf="notifications.length > 0" (click)="deleteAllNotifications()" title="Delete all">
+          <i class="fas fa-trash"></i> Clear all
+        </button>
+        <button class="btn btn-sm btn-link" (click)="showDropdown = false" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="notification-body">
+      <div *ngIf="isLoading" class="text-center p-3">
+        <i class="fas fa-spinner fa-spin"></i> Loading...
+      </div>
+
+      <div *ngIf="!isLoading && notifications.length === 0" class="text-center p-3 text-muted">
+        <i class="fas fa-bell-slash fa-2x mb-2"></i>
+        <p>No notifications</p>
+      </div>
+
+      <div class="notification-list" *ngIf="!isLoading && notifications.length > 0">
+        <div
+          *ngFor="let notification of notifications"
+          class="notification-item"
+          [class.unread]="!notification.isRead"
+          [ngClass]="getNotificationClass(notification.notificationType)"
+          (click)="navigateToLink(notification.linkUrl)">
+
+          <div class="notification-icon">
+            <i class="fas" [ngClass]="'fa-' + getNotificationIcon(notification.notificationType)"></i>
+          </div>
+
+          <div class="notification-content">
+            <div class="notification-title">{{ notification.title }}</div>
+            <div class="notification-message" *ngIf="notification.message">{{ notification.message }}</div>
+            <div class="notification-time">{{ formatDate(notification.notificationDate) }}</div>
+          </div>
+
+          <div class="notification-actions-item">
+            <button
+              *ngIf="!notification.isRead"
+              class="btn btn-sm btn-link"
+              (click)="markAsRead(notification); $event.stopPropagation()"
+              title="Mark as read">
+              <i class="fas fa-check"></i>
+            </button>
+            <button
+              class="btn btn-sm btn-link text-danger"
+              (click)="deleteNotification(notification); $event.stopPropagation()"
+              title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notification-footer" *ngIf="notifications.length > 0">
+      <a href="#" class="text-center d-block">View all notifications</a>
+    </div>
+  </div>
+</div>

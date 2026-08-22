@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"d:\\\\WBN Documents\\\\CSharpProjects\\\\e-commerce\\\\ECommerce\" -Recurse -Directory)",
+      "Bash(Select-Object -First 50 FullName)",
+      "PowerShell(Get-ChildItem -Path \"d:\\\\WBN Documents\\\\CSharpProjects\\\\e-commerce\\\\ECommerce\\\\angular\\\\src\\\\app\\\\admin\\\\catalog\\\\products\" -File -Name | Where-Object {$_ -match '\\\\.ts$'})"
+    ]
+  }
+}

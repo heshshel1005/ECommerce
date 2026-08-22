@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>ECommerce</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ECommerce.Domain\ECommerce.Domain.csproj" />
+    <ProjectReference Include="..\ECommerce.Domain.Shared\ECommerce.Domain.Shared.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Application.Contracts" Version="10.1.0" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Application.Contracts" Version="10.1.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application.Contracts" Version="10.1.0" />
+    <PackageReference Include="Volo.Abp.Identity.Application.Contracts" Version="10.1.0" />
+    <PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="10.1.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application.Contracts" Version="10.1.0" />
+    <PackageReference Include="Volo.CmsKit.Application.Contracts" Version="10.1.0" />
+  </ItemGroup>
+
+</Project>

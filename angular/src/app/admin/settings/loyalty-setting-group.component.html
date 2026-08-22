@@ -1,0 +1,28 @@
+@if (form) {
+  <form [formGroup]="form" class="py-2 abp-md-form" (ngSubmit)="submit()">
+    <div class="mb-3 form-group">
+      <label class="form-label">
+        {{ 'ECommerce::PointsPerCurrencyUnit' | abpLocalization }}
+        <span class="ms-1">*</span>
+      </label>
+      <input
+        type="number"
+        class="form-control"
+        formControlName="pointsPerCurrencyUnit"
+        min="1"
+        step="1"
+      />
+      <small class="form-text text-muted">
+        {{ 'ECommerce::PointsPerCurrencyUnitHelp' | abpLocalization }}
+      </small>
+    </div>
+    <hr />
+    <abp-button
+      buttonType="submit"
+      iconClass="fa fa-save"
+      [loading]="saving"
+    >
+      {{ 'AbpSettingManagement::Save' | abpLocalization }}
+    </abp-button>
+  </form>
+}

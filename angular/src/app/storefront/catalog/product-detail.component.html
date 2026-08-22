@@ -1,0 +1,288 @@
+@if (loading()) {
+  <p class="text-muted">{{ 'ECommerce::Loading' | abpLocalization }}</p>
+} @else if (product(); as p) {
+  <div class="storefront-pdp">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/catalog">{{ 'ECommerce::Catalog' | abpLocalization }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ p.name }}</li>
+      </ol>
+    </nav>
+
+    <h1 class="mb-3">{{ p.name }}</h1>
+    @if (p.categoryName || p.brandName || p.modelName) {
+      <p class="text-muted small mb-2">
+        @if (p.categoryName) {
+          <span>{{ p.categoryName }}</span>
+        }
+        @if (p.brandName) {
+          <span class="ms-2">{{ p.brandName }}</span>
+        }
+        @if (p.modelName) {
+          <span class="ms-2">{{ p.modelName }}</span>
+        }
+      </p>
+    }
+    @if (p.description) {
+      <p class="text-muted mb-3">{{ p.description }}</p>
+    }
+
+    <div class="row">
+      <div class="col-lg-6 mb-3">
+        <!-- Media gallery: thumbnails + main (image with zoom, or video) -->
+        @let mediaList = getMediaList();
+        @if (mediaList.length > 0) {
+          <div class="storefront-pdp-gallery">
+            <div class="storefront-pdp-gallery-main rounded">
+              @let current = mediaList[selectedMediaIndex()];
+              @if (current) {
+                @if (current.mediaType === mediaTypeImage) {
+                  <div
+                    class="storefront-pdp-image-wrapper storefront-pdp-zoom-wrapper"
+                    (click)="openLightbox()"
+                    role="button"
+                    tabindex="0"
+                    (keydown.enter)="openLightbox()"
+                    (keydown.space)="openLightbox(); $event.preventDefault()"
+                  >
+                    <img
+                      [src]="getMediaFileUrl(current.id)"
+                      [alt]="p.name"
+                      class="img-fluid rounded storefront-pdp-image"
+                      loading="lazy"
+                      (error)="$any($event.target).style.display='none'"
+                    />
+                    <span class="storefront-pdp-zoom-hint">{{ 'ECommerce::ClickToZoom' | abpLocalization }}</span>
+                  </div>
+                } @else {
+                  <video
+                    class="storefront-pdp-video rounded"
+                    controls
+                    [src]="getMediaFileUrl(current.id)"
+                    preload="metadata"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                }
+              }
+            </div>
+            @if (mediaList.length > 1) {
+              <div class="storefront-pdp-thumbnails d-flex gap-2 mt-2 flex-wrap">
+                @for (item of mediaList; track item.id; let i = $index) {
+                  <button
+                    type="button"
+                    class="storefront-pdp-thumb rounded border-0 p-0 overflow-hidden"
+                    [class.storefront-pdp-thumb-active]="selectedMediaIndex() === i"
+                    (click)="selectedMediaIndex.set(i)"
+                  >
+                    @if (item.mediaType === mediaTypeImage) {
+                      <img [src]="getMediaFileUrl(item.id)" [alt]="p.name" loading="lazy" />
+                    } @else {
+                      <span class="storefront-pdp-thumb-video">&#9654;</span>
+                    }
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="storefront-pdp-image-placeholder bg-light rounded d-flex align-items-center justify-content-center">
+            <span class="text-muted">{{ 'ECommerce::Product' | abpLocalization }}</span>
+          </div>
+        }
+        <!-- Lightbox for zoom -->
+        @if (lightboxOpen()) {
+          @let lbMedia = mediaList[selectedMediaIndex()];
+          @if (lbMedia?.mediaType === mediaTypeImage) {
+            <div class="storefront-pdp-lightbox" (click)="closeLightbox()" role="button" tabindex="0">
+              <img
+                [src]="getMediaFileUrl(lbMedia.id)"
+                [alt]="p.name"
+                class="storefront-pdp-lightbox-img"
+                (click)="$event.stopPropagation()"
+              />
+              <button type="button" class="storefront-pdp-lightbox-close btn btn-light" (click)="closeLightbox()">&times;</button>
+            </div>
+          }
+        }
+      </div>
+      <div class="col-lg-6">
+        @if (p.variants.length === 0) {
+          <p class="text-muted">{{ 'ECommerce::OutOfStock' | abpLocalization }}</p>
+        } @else {
+          <!-- Variant selector: show each variant with in-stock state -->
+          <div class="mb-3">
+            <label class="form-label">{{ 'ECommerce::Variants' | abpLocalization }}</label>
+            <div class="d-flex flex-wrap gap-2">
+              @for (v of p.variants; track v.id) {
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary storefront-variant-btn"
+                  [class.active]="selectedVariant()?.id === v.id"
+                  [class.storefront-variant-out-of-stock]="!isVariantInStock(v)"
+                  [disabled]="!isVariantInStock(v)"
+                  (click)="selectVariant(v)"
+                >
+                  {{ v.sku }}
+                  @if (v.attributes?.length) {
+                    <span class="text-muted small">({{ getVariantAttributeSummary(v) }})</span>
+                  }
+                  @if (v.price !== null) {
+                    <span class="ms-1">— {{ v.price | number:'1.2-2' }}</span>
+                  }
+                  @if (!isVariantInStock(v)) {
+                    <span class="badge bg-secondary ms-1">{{ 'ECommerce::OutOfStock' | abpLocalization }}</span>
+                  } @else {
+                    <span class="badge bg-success ms-1">{{ 'ECommerce::InStock' | abpLocalization }}</span>
+                  }
+                </button>
+              }
+            </div>
+          </div>
+
+          @if (selectedVariant(); as v) {
+            @if (isVariantInStock(v)) {
+              <p class="text-success small mb-2">
+                {{ 'ECommerce::AvailableQuantity' | abpLocalization: (v.availableQuantity ?? 0) }}
+              </p>
+              <div class="mb-3">
+                <label class="form-label">{{ 'ECommerce::Quantity' | abpLocalization }}</label>
+                <div class="storefront-pdp-quantity d-flex flex-nowrap align-items-center" style="max-width: 9rem;">
+                  <button type="button" class="btn btn-outline-secondary storefront-pdp-qty-btn" (click)="setQuantity(quantity() - 1)">−</button>
+                  <span class="storefront-pdp-qty-value" aria-label="Quantity">{{ quantity() }}</span>
+                  <button type="button" class="btn btn-outline-secondary storefront-pdp-qty-btn" (click)="setQuantity(quantity() + 1)">+</button>
+                </div>
+              </div>
+            }
+          } @else {
+            <p class="text-muted small">{{ 'ECommerce::SelectVariant' | abpLocalization }}</p>
+          }
+
+          <div class="d-flex flex-wrap gap-2 align-items-center">
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!canAddToCart() || addingToCart()"
+              (click)="addToCart()"
+            >
+              @if (addingToCart()) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+              }
+              {{ 'ECommerce::AddToCart' | abpLocalization }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="toggleWishlist()"
+              [class.btn-outline-danger]="isInWishlist()"
+            >
+              {{ isInWishlist() ? ('ECommerce::RemoveFromWishlist' | abpLocalization) : ('ECommerce::AddToWishlist' | abpLocalization) }}
+            </button>
+            <button type="button" class="btn btn-outline-secondary" (click)="addToCompare()">
+              {{ 'ECommerce::AddToCompare' | abpLocalization }}
+            </button>
+            @if (compareProductIds().length > 0) {
+              <a [routerLink]="['/catalog/compare']" [queryParams]="{ ids: compareProductIds().join(',') }" class="btn btn-outline-primary">
+                {{ 'ECommerce::Compare' | abpLocalization }} ({{ compareProductIds().length }})
+              </a>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Reviews & ratings -->
+    <div class="mt-5 pt-4 border-top">
+      <h2 class="h5 mb-3">{{ 'ECommerce::Reviews' | abpLocalization }}</h2>
+      @if (reviewLoading()) {
+        <p class="text-muted">{{ 'ECommerce::Loading' | abpLocalization }}</p>
+      } @else {
+        @if (reviewAggregate(); as agg) {
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="storefront-stars" aria-label="{{ 'ECommerce::Rating' | abpLocalization }}: {{ agg.averageRating ?? 0 }}">
+              @for (s of reviewStars(agg); track s) {
+                <span class="storefront-star" [class.filled]="s <= Math.round(agg.averageRating ?? 0)">&#9733;</span>
+              }
+            </span>
+            <span class="text-muted small">
+              {{ 'ECommerce::ReviewsCount' | abpLocalization: (agg.totalCount ?? 0) }}
+            </span>
+          </div>
+        }
+        @if (authService.isAuthenticated) {
+          <div class="card mb-4">
+            <div class="card-body">
+              <h3 class="h6">{{ 'ECommerce::WriteReview' | abpLocalization }}</h3>
+              <div class="mb-2">
+                <label class="form-label">{{ 'ECommerce::Rating' | abpLocalization }}</label>
+                <div class="d-flex gap-1">
+                  @for (s of [1,2,3,4,5]; track s) {
+                    <button
+                      type="button"
+                      class="btn btn-outline-warning btn-sm storefront-star-btn"
+                      [class.active]="reviewRating() >= s"
+                      (click)="setReviewRating(s)"
+                    >
+                      &#9733;
+                    </button>
+                  }
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label">{{ 'ECommerce::ReviewText' | abpLocalization }}</label>
+                <textarea
+                  class="form-control"
+                  rows="3"
+                  [value]="reviewText()"
+                  (input)="reviewText.set($any($event.target).value)"
+                  maxlength="2000"
+                ></textarea>
+              </div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="submitReviewLoading()"
+                (click)="submitReview()"
+              >
+                {{ 'ECommerce::SubmitReview' | abpLocalization }}
+              </button>
+            </div>
+          </div>
+        } @else {
+          <p class="text-muted mb-3">
+            <a routerLink="/account/login">{{ 'ECommerce::LoginToReview' | abpLocalization }}</a>
+          </p>
+        }
+        @if (reviewList().length === 0 && !reviewLoading()) {
+          <p class="text-muted">{{ 'ECommerce::NoReviews' | abpLocalization }}</p>
+        } @else {
+          <ul class="list-unstyled">
+            @for (r of reviewList(); track r.id) {
+              <li class="border-bottom pb-3 mb-3">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <span class="storefront-stars small">
+                    @for (s of [1,2,3,4,5]; track s) {
+                      <span class="storefront-star small" [class.filled]="s <= r.rating">&#9733;</span>
+                    }
+                  </span>
+                  <strong>{{ r.authorDisplayName || 'Customer' }}</strong>
+                  <span class="text-muted small">{{ formatReviewDate(r.creationTime) }}</span>
+                </div>
+                @if (r.reviewText) {
+                  <p class="mb-0 text-body">{{ r.reviewText }}</p>
+                }
+              </li>
+            }
+          </ul>
+          @if (hasMoreReviews()) {
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="loadMoreReviews()">
+              {{ 'ECommerce::LoadMore' | abpLocalization }}
+            </button>
+          }
+        }
+      }
+    </div>
+  </div>
+} @else {
+  <p class="text-muted">{{ 'ECommerce::ProductNotFound' | abpLocalization }}</p>
+}

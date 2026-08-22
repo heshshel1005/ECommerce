@@ -1,0 +1,104 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <h5 class="mb-0">{{ 'ECommerce::OrganizationSignupAdminQueueTitle' | abpLocalization }}</h5>
+        <div class="d-flex flex-wrap gap-2">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            [disabled]="repairingPermissions()"
+            (click)="repairTenantAdminPermissions()"
+          >
+            @if (repairingPermissions()) {
+              {{ 'ECommerce::Loading' | abpLocalization }}
+            } @else {
+              {{ 'ECommerce::OrganizationSignupQueueRepairTenantAdmins' | abpLocalization }}
+            }
+          </button>
+          <a routerLink="/admin/dashboard" class="btn btn-sm btn-outline-secondary">
+            {{ 'ECommerce::GoToDashboard' | abpLocalization }}
+          </a>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="text-muted small mb-3">
+          {{ 'ECommerce::OrganizationSignupAdminQueueIntro' | abpLocalization }}
+        </p>
+        <div class="row g-2 mb-3">
+          <div class="col-auto">
+            <select
+              class="form-select form-select-sm"
+              [value]="statusFilter()"
+              (change)="statusFilter.set($any($event.target).value); onFilterChange()"
+            >
+              <option value="">{{ 'ECommerce::OrganizationSignupQueueFilterAll' | abpLocalization }}</option>
+              <option value="0">{{ 'ECommerce::Enum:OrganizationSignupStatus.Pending' | abpLocalization }}</option>
+              <option value="1">{{ 'ECommerce::Enum:OrganizationSignupStatus.Approved' | abpLocalization }}</option>
+              <option value="2">{{ 'ECommerce::Enum:OrganizationSignupStatus.Rejected' | abpLocalization }}</option>
+            </select>
+          </div>
+        </div>
+        @if (loading()) {
+          <p class="text-muted mb-0">{{ 'ECommerce::Loading' | abpLocalization }}</p>
+        } @else {
+          <div class="table-responsive">
+            <table class="table table-sm table-hover">
+              <thead>
+                <tr>
+                  <th>{{ 'ECommerce::OrganizationSignupQueueSubmitted' | abpLocalization }}</th>
+                  <th>{{ 'ECommerce::OrganizationSignupTenantName' | abpLocalization }}</th>
+                  <th>{{ 'ECommerce::OrganizationSignupDisplayName' | abpLocalization }}</th>
+                  <th>{{ 'ECommerce::OrganizationSignupAdminEmail' | abpLocalization }}</th>
+                  <th>{{ 'ECommerce::OrderStatus' | abpLocalization }}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of items(); track item.id) {
+                  <tr>
+                    <td>{{ item.creationTime | date: 'medium' }}</td>
+                    <td>{{ item.tenantName }}</td>
+                    <td>{{ item.displayName }}</td>
+                    <td>{{ item.adminEmail }}</td>
+                    <td>{{ statusLabel(item.status) | abpLocalization }}</td>
+                    <td class="text-end">
+                      <a
+                        [routerLink]="['/admin/organization-signups', item.id]"
+                        class="btn btn-outline-primary btn-sm"
+                      >
+                        {{ 'ECommerce::OrganizationSignupQueueView' | abpLocalization }}
+                      </a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          @if (items().length === 0) {
+            <p class="text-muted mb-0">{{ 'ECommerce::NoData' | abpLocalization }}</p>
+          }
+          @if (totalPages() > 1) {
+            <nav class="mt-2">
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" [class.disabled]="!hasPrev()">
+                  <button type="button" class="page-link" [disabled]="!hasPrev()" (click)="goPrev()">
+                    {{ 'ECommerce::Previous' | abpLocalization }}
+                  </button>
+                </li>
+                <li class="page-item disabled">
+                  <span class="page-link">{{ currentPage() + 1 }} / {{ totalPages() }}</span>
+                </li>
+                <li class="page-item" [class.disabled]="!hasNext()">
+                  <button type="button" class="page-link" [disabled]="!hasNext()" (click)="goNext()">
+                    {{ 'ECommerce::Next' | abpLocalization }}
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

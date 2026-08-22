@@ -1,0 +1,32 @@
+.app-breadcrumbs {
+  margin-bottom: 1rem;
+}
+
+.breadcrumb {
+  margin-bottom: 0;
+  padding: 0.5rem 0;
+  background: transparent;
+  font-size: 0.875rem;
+}
+
+.breadcrumb-item {
+  a {
+    /* Use theme body color when set; fallback to light gray so breadcrumbs stay readable on dark storefront main */
+    color: var(--lpx-body-color, #e9ecef);
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+      opacity: 0.9;
+    }
+  }
+  &.active {
+    /* Current page: high-contrast white so "Catalog" (and any last segment) is clearly readable */
+    color: var(--lpx-body-color, #ffffff);
+    font-weight: 600;
+  }
+}
+
+/* Separator between items: match link color for visibility */
+.breadcrumb-item + .breadcrumb-item::before {
+  color: var(--lpx-body-color, #e9ecef);
+}

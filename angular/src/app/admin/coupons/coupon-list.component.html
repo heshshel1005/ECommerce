@@ -1,0 +1,115 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">{{ 'ECommerce::Coupons' | abpLocalization }}</h5>
+        <button type="button" class="btn btn-sm btn-primary" (click)="toggleCreateForm()">
+          {{ showCreateForm() ? 'Cancel' : 'ECommerce::CreateCoupon' | abpLocalization }}
+        </button>
+      </div>
+      <div class="card-body">
+        @if (showCreateForm()) {
+          <form [formGroup]="createForm" (ngSubmit)="submitCreate()" class="border rounded p-3 mb-4 bg-light">
+            <h6 class="mb-3">{{ 'ECommerce::CreateCoupon' | abpLocalization }}</h6>
+            <div class="row g-2">
+              <div class="col-md-3">
+                <label class="form-label">{{ 'ECommerce::CouponCode' | abpLocalization }} <span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" formControlName="code" placeholder="e.g. SAVE10" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">{{ 'ECommerce::CouponType' | abpLocalization }}</label>
+                <select class="form-select form-select-sm" formControlName="type">
+                  <option [value]="typePercent">{{ 'ECommerce::CouponTypePercent' | abpLocalization }}</option>
+                  <option [value]="typeFixed">{{ 'ECommerce::CouponTypeFixed' | abpLocalization }}</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">{{ 'ECommerce::CouponValue' | abpLocalization }} <span class="text-danger">*</span></label>
+                <input type="number" class="form-control form-control-sm" formControlName="value" min="0" step="0.01" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">{{ 'ECommerce::MinOrderAmount' | abpLocalization }}</label>
+                <input type="number" class="form-control form-control-sm" formControlName="minOrderAmount" min="0" step="0.01" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">{{ 'ECommerce::ValidFrom' | abpLocalization }}</label>
+                <input type="date" class="form-control form-control-sm" formControlName="validFrom" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">{{ 'ECommerce::ValidTo' | abpLocalization }}</label>
+                <input type="date" class="form-control form-control-sm" formControlName="validTo" />
+              </div>
+            </div>
+            <div class="row g-2 mt-2">
+              <div class="col-md-2">
+                <label class="form-label">{{ 'ECommerce::TotalUsageLimit' | abpLocalization }}</label>
+                <input type="number" class="form-control form-control-sm" formControlName="totalUsageLimit" min="0" placeholder="Unlimited" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">{{ 'ECommerce::PerUserUsageLimit' | abpLocalization }}</label>
+                <input type="number" class="form-control form-control-sm" formControlName="perUserUsageLimit" min="0" placeholder="Unlimited" />
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="couponIsActive" formControlName="isActive" />
+                  <label class="form-check-label" for="couponIsActive">{{ 'ECommerce::IsActive' | abpLocalization }}</label>
+                </div>
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary btn-sm" [disabled]="createForm.invalid || submitting()">
+                  @if (submitting()) {
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                  } @else {
+                    {{ 'ECommerce::Create' | abpLocalization }}
+                  }
+                </button>
+              </div>
+            </div>
+          </form>
+        }
+
+        @if (loading()) {
+          <p class="text-muted mb-0">{{ 'ECommerce::Loading' | abpLocalization }}</p>
+        } @else {
+          <div class="table-responsive">
+            <table class="table table-sm table-hover">
+              <thead>
+                <tr>
+                  <th>{{ 'ECommerce::CouponCode' | abpLocalization }}</th>
+                  <th>{{ 'ECommerce::CouponType' | abpLocalization }}</th>
+                  <th class="text-end">{{ 'ECommerce::CouponValue' | abpLocalization }}</th>
+                  <th class="text-end">{{ 'ECommerce::MinOrderAmount' | abpLocalization }}</th>
+                  <th>{{ 'ECommerce::ValidFrom' | abpLocalization }}</th>
+                  <th>{{ 'ECommerce::ValidTo' | abpLocalization }}</th>
+                  <th class="text-center">{{ 'ECommerce::IsActive' | abpLocalization }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of items(); track item.id) {
+                  <tr>
+                    <td><strong>{{ item.code }}</strong></td>
+                    <td>{{ typeLabel(item.type) | abpLocalization }}</td>
+                    <td class="text-end">{{ formatDiscount(item) }}</td>
+                    <td class="text-end">{{ item.minOrderAmount | number:'1.2-2' }}</td>
+                    <td>{{ item.validFrom ? (item.validFrom | date:'shortDate') : '—' }}</td>
+                    <td>{{ item.validTo ? (item.validTo | date:'shortDate') : '—' }}</td>
+                    <td class="text-center">
+                      @if (item.isActive) {
+                        <span class="badge bg-success">Yes</span>
+                      } @else {
+                        <span class="badge bg-secondary">No</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          @if (items().length === 0) {
+            <p class="text-muted mb-0">{{ 'ECommerce::NoCouponsYet' | abpLocalization }}</p>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

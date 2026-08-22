@@ -1,0 +1,6 @@
+<Project>
+  <!-- Security hardening: bump Scriban to a version that includes fixes for known advisories. -->
+  <ItemGroup>
+    <PackageReference Include="Scriban" Version="7.0.3" />
+  </ItemGroup>
+</Project>

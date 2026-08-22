@@ -1,0 +1,146 @@
+<div class="row">
+  <div class="col-12">
+    <div class="mb-3">
+      <a routerLink="/admin/organization-signups" class="btn btn-sm btn-outline-secondary">
+        ← {{ 'ECommerce::OrganizationSignupQueueBackToList' | abpLocalization }}
+      </a>
+    </div>
+    @if (loading()) {
+      <p class="text-muted">{{ 'ECommerce::Loading' | abpLocalization }}</p>
+    } @else if (!request()) {
+      <p class="text-muted">{{ 'ECommerce::NoData' | abpLocalization }}</p>
+    } @else {
+      <div class="card">
+        <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <h5 class="mb-0">{{ 'ECommerce::OrganizationSignupQueueDetailTitle' | abpLocalization }}</h5>
+          <span class="badge bg-secondary">{{ statusLabel(request()!.status) | abpLocalization }}</span>
+        </div>
+        <div class="card-body">
+          <h6 class="text-muted text-uppercase small">
+            {{ 'ECommerce::OrganizationSignupSectionOrganization' | abpLocalization }}
+          </h6>
+          <dl class="row small mb-4">
+            <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupTenantName' | abpLocalization }}</dt>
+            <dd class="col-sm-9">{{ request()!.tenantName }}</dd>
+            <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupDisplayName' | abpLocalization }}</dt>
+            <dd class="col-sm-9">{{ request()!.displayName }}</dd>
+            @if (request()!.legalName) {
+              <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupLegalName' | abpLocalization }}</dt>
+              <dd class="col-sm-9">{{ request()!.legalName }}</dd>
+            }
+            <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupBusinessType' | abpLocalization }}</dt>
+            <dd class="col-sm-9">{{ businessTypeLabel(request()!.businessType) | abpLocalization }}</dd>
+            @if (request()!.website) {
+              <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupWebsite' | abpLocalization }}</dt>
+              <dd class="col-sm-9">{{ request()!.website }}</dd>
+            }
+            @if (request()!.phone) {
+              <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupPhone' | abpLocalization }}</dt>
+              <dd class="col-sm-9">{{ request()!.phone }}</dd>
+            }
+            @if (request()!.shortDescription) {
+              <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupShortDescription' | abpLocalization }}</dt>
+              <dd class="col-sm-9">{{ request()!.shortDescription }}</dd>
+            }
+            @if (request()!.logoFilePathOrKey) {
+              <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupQueueLogoPath' | abpLocalization }}</dt>
+              <dd class="col-sm-9 text-break font-monospace small">{{ request()!.logoFilePathOrKey }}</dd>
+            }
+          </dl>
+
+          <h6 class="text-muted text-uppercase small">
+            {{ 'ECommerce::OrganizationSignupSectionAdmin' | abpLocalization }}
+          </h6>
+          <dl class="row small mb-4">
+            <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupAdminEmail' | abpLocalization }}</dt>
+            <dd class="col-sm-9">{{ request()!.adminEmail }}</dd>
+            <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupAdminUserName' | abpLocalization }}</dt>
+            <dd class="col-sm-9">{{ request()!.adminUserName }}</dd>
+            <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupAdminDisplayName' | abpLocalization }}</dt>
+            <dd class="col-sm-9">{{ request()!.adminDisplayName }}</dd>
+          </dl>
+
+          <h6 class="text-muted text-uppercase small">
+            {{ 'ECommerce::OrganizationSignupQueueWorkflow' | abpLocalization }}
+          </h6>
+          <dl class="row small mb-0">
+            <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupQueueSubmitted' | abpLocalization }}</dt>
+            <dd class="col-sm-9">{{ request()!.creationTime | date: 'medium' }}</dd>
+            @if (request()!.reviewedTime) {
+              <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupQueueReviewedAt' | abpLocalization }}</dt>
+              <dd class="col-sm-9">{{ request()!.reviewedTime | date: 'medium' }}</dd>
+            }
+            @if (request()!.reviewerUserId) {
+              <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupQueueReviewer' | abpLocalization }}</dt>
+              <dd class="col-sm-9 font-monospace small">{{ request()!.reviewerUserId }}</dd>
+            }
+            @if (request()!.createdTenantId) {
+              <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupQueueCreatedTenantId' | abpLocalization }}</dt>
+              <dd class="col-sm-9 font-monospace small">{{ request()!.createdTenantId }}</dd>
+            }
+            @if (request()!.rejectionReason) {
+              <dt class="col-sm-3">{{ 'ECommerce::OrganizationSignupQueueRejectionReason' | abpLocalization }}</dt>
+              <dd class="col-sm-9">{{ request()!.rejectionReason }}</dd>
+            }
+          </dl>
+
+          @if (isPending()) {
+            <hr class="my-4" />
+            <div class="d-flex flex-wrap gap-2 align-items-start">
+              <button
+                type="button"
+                class="btn btn-success"
+                [disabled]="approving() || rejecting()"
+                (click)="approve()"
+              >
+                @if (approving()) {
+                  <span>{{ 'ECommerce::Loading' | abpLocalization }}</span>
+                } @else {
+                  {{ 'ECommerce::OrganizationSignupQueueApprove' | abpLocalization }}
+                }
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-danger"
+                [disabled]="approving() || rejecting()"
+                (click)="toggleRejectForm()"
+              >
+                {{ 'ECommerce::OrganizationSignupQueueReject' | abpLocalization }}
+              </button>
+            </div>
+            @if (showRejectForm()) {
+              <form class="mt-3" [formGroup]="rejectForm" (ngSubmit)="submitReject()">
+                <label class="form-label" for="rejectReason">{{
+                  'ECommerce::OrganizationSignupQueueRejectionReason' | abpLocalization
+                }}</label>
+                <textarea
+                  id="rejectReason"
+                  class="form-control"
+                  rows="4"
+                  formControlName="reason"
+                  [maxlength]="2000"
+                ></textarea>
+                @if (rejectForm.controls.reason.touched && rejectForm.controls.reason.invalid) {
+                  <div class="text-danger small mt-1">
+                    {{ 'ECommerce::OrganizationSignupQueueRejectionReasonRequired' | abpLocalization }}
+                  </div>
+                }
+                <button
+                  type="submit"
+                  class="btn btn-danger mt-2"
+                  [disabled]="rejectForm.invalid || rejecting() || approving()"
+                >
+                  @if (rejecting()) {
+                    <span>{{ 'ECommerce::Loading' | abpLocalization }}</span>
+                  } @else {
+                    {{ 'ECommerce::OrganizationSignupQueueConfirmReject' | abpLocalization }}
+                  }
+                </button>
+              </form>
+            }
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

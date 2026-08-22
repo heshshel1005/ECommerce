@@ -1,0 +1,145 @@
+<h4>{{ 'AbpAccount::Register' | abpLocalization }}</h4>
+<p class="text-muted">
+  {{ 'AbpAccount::AlreadyRegistered' | abpLocalization }}
+  <a class="text-decoration-none" routerLink="/account/login">{{ 'AbpAccount::Login' | abpLocalization }}</a>
+</p>
+
+<form #registrationForm [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-4">
+  <div class="card mb-3">
+    <div class="card-header">{{ 'AbpAccount::Account' | abpLocalization }}</div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label for="sub-username" class="form-label">{{ 'AbpAccount::UserName' | abpLocalization }} *</label>
+        <input #refUserName type="text" id="sub-username" class="form-control" formControlName="userName" autocomplete="username" />
+      </div>
+      <div class="mb-3">
+        <label for="sub-email" class="form-label">{{ 'AbpAccount::EmailAddress' | abpLocalization }} *</label>
+        <input #refEmail type="email" id="sub-email" class="form-control" formControlName="emailAddress" autocomplete="email" />
+      </div>
+      <div class="mb-3">
+        <label for="sub-password" class="form-label">{{ 'AbpAccount::Password' | abpLocalization }} *</label>
+        <div class="input-group">
+          <input #refPassword [type]="showPassword ? 'text' : 'password'" id="sub-password" class="form-control" formControlName="password" autocomplete="new-password" />
+          <button type="button" class="btn btn-outline-secondary" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" title="{{ showPassword ? 'Hide password' : 'Show password' }}">
+            @if (showPassword) {
+              <span aria-hidden="true">Hide</span>
+            } @else {
+              <span aria-hidden="true">Show</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">{{ 'AbpAccount::DisplayName' | abpLocalization }}</div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label for="sub-displayname" class="form-label">{{ 'AbpAccount::DisplayName' | abpLocalization }} *</label>
+        <input #refDisplayName type="text" id="sub-displayname" class="form-control" formControlName="displayName" />
+      </div>
+      <div class="mb-3">
+        <label for="sub-phone" class="form-label">Phone</label>
+        <input #refPhone type="tel" id="sub-phone" class="form-control" formControlName="phoneNumber" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">Shipping address *</div>
+    <div class="card-body" formGroupName="shippingAddress">
+      <div class="mb-3">
+        <label for="ship-label" class="form-label">Label</label>
+        <input #refShipLabel type="text" id="ship-label" class="form-control" formControlName="label" placeholder="e.g. Home" />
+      </div>
+      <div class="mb-3">
+        <label for="ship-street" class="form-label">Street *</label>
+        <input #refShipStreet type="text" id="ship-street" class="form-control" formControlName="street" />
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="ship-city" class="form-label">City</label>
+          <input type="text" id="ship-city" class="form-control" formControlName="city" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="ship-region" class="form-label">Region</label>
+          <input type="text" id="ship-region" class="form-control" formControlName="region" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="ship-postal" class="form-label">Postal code</label>
+          <input type="text" id="ship-postal" class="form-control" formControlName="postalCode" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="ship-country" class="form-label">Country</label>
+          <input type="text" id="ship-country" class="form-control" formControlName="country" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">Billing address</div>
+    <div class="card-body">
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="same-billing" formControlName="useSameBilling" />
+        <label class="form-check-label" for="same-billing">Same as shipping address</label>
+      </div>
+      @if (form.get('useSameBilling')?.value === false) {
+        <div formGroupName="billingAddress">
+          <div class="mb-3">
+            <label for="bill-label" class="form-label">Label</label>
+            <input type="text" id="bill-label" class="form-control" formControlName="label" />
+          </div>
+          <div class="mb-3">
+            <label for="bill-street" class="form-label">Street</label>
+            <input type="text" id="bill-street" class="form-control" formControlName="street" />
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="bill-city" class="form-label">City</label>
+              <input type="text" id="bill-city" class="form-control" formControlName="city" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="bill-region" class="form-label">Region</label>
+              <input type="text" id="bill-region" class="form-control" formControlName="region" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="bill-postal" class="form-label">Postal code</label>
+              <input type="text" id="bill-postal" class="form-control" formControlName="postalCode" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="bill-country" class="form-label">Country</label>
+              <input type="text" id="bill-country" class="form-control" formControlName="country" />
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (showValidationMessage) {
+    <div class="alert alert-danger mb-3" role="alert">
+      Please fill in all required fields: Username, Email, Password (min 6 characters), Display name, and Shipping street.
+    </div>
+  }
+  <button
+    type="button"
+    class="btn btn-primary btn-lg"
+    [disabled]="inProgress"
+    (click)="onSubmit()"
+  >
+    @if (inProgress) {
+      <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+    }
+    {{ 'AbpAccount::Register' | abpLocalization }}
+  </button>
+</form>
+
+<p class="mt-3 small text-muted">
+  After registering, you must confirm your email before you can log in. Check your inbox for the confirmation link.
+</p>

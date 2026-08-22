@@ -1,0 +1,29 @@
+<div class="container my-4">
+  <div *ngIf="loading" class="text-center text-muted py-5">
+    <span class="spinner-border spinner-border-sm me-2"></span>
+    Loading...
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <h1 class="mb-3">Blog</h1>
+    <div *ngIf="posts.length === 0" class="text-muted">
+      No blog posts yet.
+    </div>
+    <div *ngIf="posts.length > 0" class="list-group">
+      <a
+        *ngFor="let post of posts"
+        class="list-group-item list-group-item-action"
+        [href]="'/blog/' + post.slug"
+      >
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{ post.title }}</h5>
+          <small>{{ post.creationTime | date: 'mediumDate' }}</small>
+        </div>
+        <p *ngIf="post.shortDescription" class="mb-1 text-muted">
+          {{ post.shortDescription }}
+        </p>
+      </a>
+    </div>
+  </ng-container>
+</div>
+

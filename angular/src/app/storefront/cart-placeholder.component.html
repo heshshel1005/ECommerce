@@ -1,0 +1,83 @@
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">{{ 'ECommerce::Cart' | abpLocalization }}</h2>
+
+    @if (loading()) {
+      <p class="text-muted mb-0">{{ 'ECommerce::Loading' | abpLocalization }}</p>
+    } @else if (!cart()?.items?.length) {
+      <p class="text-muted mb-0">{{ 'ECommerce::CartEmpty' | abpLocalization }}</p>
+      <a routerLink="/catalog" class="btn btn-outline-primary mt-3">{{ 'ECommerce::Catalog' | abpLocalization }}</a>
+    } @else {
+      <div class="table-responsive mt-3">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th>{{ 'ECommerce::ProductName' | abpLocalization }}</th>
+              <th>{{ 'ECommerce::Sku' | abpLocalization }}</th>
+              <th class="text-end">{{ 'ECommerce::Price' | abpLocalization }}</th>
+              <th class="text-end">{{ 'ECommerce::Quantity' | abpLocalization }}</th>
+              <th class="text-end">{{ 'ECommerce::SubTotal' | abpLocalization }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of cartItems(); track item.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/catalog/product', item.productId]" class="text-decoration-none">{{ item.productName || ('ECommerce::Product' | abpLocalization) }}</a>
+                </td>
+                <td>{{ item.sku }}</td>
+                <td class="text-end">{{ (item.unitPrice ?? 0) | number:'1.2-2' }}</td>
+                <td class="text-end">
+                  <div class="d-inline-flex align-items-center gap-1">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-sm"
+                      [disabled]="updatingId() === item.id || item.quantity <= 1"
+                      (click)="updateQuantity(item, item.quantity - 1)"
+                    >
+                      −
+                    </button>
+                    <span class="quantity-display" aria-label="Quantity">{{ item.quantity }}</span>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-sm"
+                      [disabled]="updatingId() === item.id"
+                      (click)="updateQuantity(item, item.quantity + 1)"
+                    >
+                      +
+                    </button>
+                    @if (updatingId() === item.id) {
+                      <span class="spinner-border spinner-border-sm ms-1" aria-hidden="true"></span>
+                    }
+                  </div>
+                </td>
+                <td class="text-end">{{ lineTotal(item) | number:'1.2-2' }}</td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    [disabled]="removingId() === item.id"
+                    (click)="removeItem(item)"
+                    [attr.title]="'ECommerce::Delete' | abpLocalization"
+                  >
+                    @if (removingId() === item.id) {
+                      <span class="spinner-border spinner-border-sm"></span>
+                    } @else {
+                      <i class="fa fa-trash"></i>
+                    }
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="mb-0 mt-2"><strong>{{ 'ECommerce::SubTotal' | abpLocalization }}:</strong> {{ subtotal() | number:'1.2-2' }}</p>
+      <div class="mt-3 d-flex flex-wrap gap-2">
+        <a routerLink="/checkout" class="btn btn-primary">{{ 'ECommerce::Checkout' | abpLocalization }}</a>
+        <a routerLink="/catalog" class="btn btn-outline-secondary">{{ 'ECommerce::ContinueShopping' | abpLocalization }}</a>
+      </div>
+    }
+  </div>
+</div>

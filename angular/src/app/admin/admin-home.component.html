@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title mb-3">{{ 'ECommerce::AdminHome' | abpLocalization }}</h2>
+        <p class="text-muted mb-4">
+          {{ 'ECommerce::AdminHomeDescription' | abpLocalization }}
+        </p>
+        <a routerLink="/admin/dashboard" class="btn btn-primary">
+          <i class="fa fa-tachometer me-1"></i>
+          {{ 'ECommerce::GoToDashboard' | abpLocalization }}
+        </a>
+        <a routerLink="/admin/analytics" class="btn btn-outline-secondary ms-2">
+          <i class="fa fa-chart-line me-1"></i>
+          {{ 'ECommerce::GoToAnalytics' | abpLocalization }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
